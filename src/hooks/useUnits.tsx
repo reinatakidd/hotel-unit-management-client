@@ -25,9 +25,18 @@ export const useUnits = () => {
     }
   };
 
+  const addUnit = async (unit: Omit<TUnitProps, "id">) => {
+    try {
+      const newUnit = await unitsService.createUnit(unit);
+      setUnits((prev) => [...prev, newUnit]);
+    } catch (error) {
+      console.error("Error creating unit:", error);
+    }
+  };
+
   useEffect(() => {
     getUnits();
   }, []);
 
-  return { units, getUnits, changeUnitStatus };
+  return { units, getUnits, changeUnitStatus, addUnit };
 };
