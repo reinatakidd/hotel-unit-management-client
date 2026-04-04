@@ -1,42 +1,9 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
-
-type TUnitProps = {
-  id: number;
-  name: string;
-  type: string;
-  status: string;
-};
-
-const initialUnits: TUnitProps[] = [
-  { id: 1, name: "Unit A-101", type: "Cabin", status: "Available" },
-  { id: 2, name: "Unit B-202", type: "Capsule", status: "Occupied" },
-  {
-    id: 3,
-    name: "Unit C-303",
-    type: "Capsule",
-    status: "Cleaning in Progress",
-  },
-  {
-    id: 4,
-    name: "Unit D-404",
-    type: "Cabin",
-    status: "Maintenance Needed",
-  },
-];
+import { useUnits } from "@/hooks/useUnits";
 
 export default function Home() {
-  const [units, setUnits] = useState<TUnitProps[]>(initialUnits);
-
-  const fetchUnits = (status?: string) => {
-    if (!status) {
-      setUnits(initialUnits);
-      return;
-    }
-
-    setUnits(initialUnits.filter((unit) => unit.status === status));
-  };
+  const { units, getUnits, changeUnitStatus } = useUnits();
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -58,7 +25,7 @@ export default function Home() {
       </div>
       <div className="p-4 bg-white">
         <select
-          onChange={(e) => fetchUnits(e.target.value)}
+          onChange={(e) => getUnits(e.target.value)}
           className="mb-4 border rounded px-2 py-1"
           defaultValue=""
         >
@@ -86,17 +53,13 @@ export default function Home() {
                     value={unit.status}
                     onChange={(e) => {
                       const newStatus = e.target.value;
-                      setUnits((prevUnits) =>
-                        prevUnits.map((u) =>
-                          u.id === unit.id ? { ...u, status: newStatus } : u,
-                        ),
-                      );
+                      changeUnitStatus(unit.id, newStatus);
                     }}
                     className="border rounded px-2 py-1"
                   >
                     <option value="Available">Available</option>
                     <option value="Occupied">Occupied</option>
-                    <option value="Cleaning in Progress">
+                    <option value="Cleaning In Progress">
                       Cleaning in Progress
                     </option>
                     <option value="Maintenance Needed">
