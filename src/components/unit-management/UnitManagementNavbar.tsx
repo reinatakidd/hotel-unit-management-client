@@ -44,14 +44,14 @@ export default function UnitManagementNavbar({
 
         <div className="flex items-center gap-2.5">
           <Image
-            src="https://picsum.photos/300/300"
+            src="/assets/user-icon.webp"
             alt="User Avatar"
             width={36}
             height={36}
             className="h-8 w-8 rounded-full md:h-9 md:w-9"
           />
           <div className="hidden leading-tight md:block">
-            <p className="text-sm font-medium text-gray-700">Reinata Kidd</p>
+            <p className="text-sm font-medium text-gray-700">Gunawan S</p>
             <p className="text-xs text-gray-400">Admin</p>
           </div>
         </div>

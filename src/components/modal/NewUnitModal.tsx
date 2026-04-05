@@ -122,9 +122,9 @@ export default function NewUnitModal({
                 className="appearance-none border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm 
                 focus:outline-none focus:border-[#2db6b6]/60 transition w-full"
               >
-                {UNIT_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                {UNIT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
                   </option>
                 ))}
               </select>
@@ -146,9 +146,9 @@ export default function NewUnitModal({
                 className="appearance-none border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm 
                 focus:outline-none focus:border-[#2db6b6]/60 transition w-full"
               >
-                {UNIT_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
+                {UNIT_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
                   </option>
                 ))}
               </select>
