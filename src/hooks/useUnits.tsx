@@ -35,7 +35,22 @@ export const useUnits = () => {
   };
 
   useEffect(() => {
-    getUnits();
+    let isMounted = true;
+
+    void unitsService
+      .fetchUnits()
+      .then((data) => {
+        if (isMounted) {
+          setUnits(data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching units:", error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return { units, getUnits, changeUnitStatus, addUnit };

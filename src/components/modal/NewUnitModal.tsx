@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import { createUnit } from "@/services/unitService";
 import { TUnitProps } from "@/types/unit";
 
@@ -30,7 +31,7 @@ export default function NewUnitModal({
     status: "Available",
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -58,8 +59,12 @@ export default function NewUnitModal({
       setForm({ name: "", type: "capsule", status: "Available" });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      setError(err?.response?.data?.error ?? "Failed to create unit.");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error ?? "Failed to create unit.");
+      } else {
+        setError("Failed to create unit.");
+      }
     } finally {
       setLoading(false);
     }
@@ -84,7 +89,7 @@ export default function NewUnitModal({
 
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition"
+            className="text-gray-400 cursor-pointer hover:text-gray-600 transition"
             aria-label="Close"
           >
             <i className="fi fi-rr-cross text-sm leading-none" />
@@ -164,7 +169,7 @@ export default function NewUnitModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm rounded-lg border border-gray-200 
+              className="px-4 py-2 cursor-pointer text-sm rounded-lg border border-gray-200 
               text-gray-600 hover:bg-gray-100 transition"
             >
               Cancel
@@ -173,7 +178,7 @@ export default function NewUnitModal({
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm rounded-lg bg-[#2db6b6] hover:bg-[#25a5a5] 
+              className="px-4 py-2 text-sm cursor-pointer rounded-lg bg-[#2db6b6] hover:bg-[#25a5a5] 
               text-white font-medium transition shadow-sm disabled:opacity-60"
             >
               {loading ? "Creating..." : "Create Unit"}

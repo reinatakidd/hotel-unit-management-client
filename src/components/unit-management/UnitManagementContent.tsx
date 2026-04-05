@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUnits } from "@/hooks/useUnits";
 import NewUnitModal from "@/components/modal/NewUnitModal";
+import UnitManagementDesktopTable from "@/components/unit-management/UnitManagementDesktopTable";
+import UnitManagementMobileList from "@/components/unit-management/UnitManagementMobileList";
 import { TUnitProps } from "@/types/unit";
 
 type TInspectionStateProps = {
@@ -11,7 +13,7 @@ type TInspectionStateProps = {
   electricity: boolean;
 };
 
-export default function UnitManagementTable() {
+export default function UnitManagementContent() {
   const { units, getUnits, changeUnitStatus } = useUnits();
   const [isNewUnitModalOpen, setIsNewUnitModalOpen] = useState<boolean>(false);
   const [checkoutUnit, setCheckoutUnit] = useState<TUnitProps | null>(null);
@@ -21,6 +23,24 @@ export default function UnitManagementTable() {
     bathroom: false,
     electricity: false,
   });
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [hasViewportInfo, setHasViewportInfo] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const updateViewport = () => {
+      setIsMobileViewport(mediaQuery.matches);
+      setHasViewportInfo(true);
+    };
+
+    updateViewport();
+    mediaQuery.addEventListener("change", updateViewport);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateViewport);
+    };
+  }, []);
 
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -67,7 +87,7 @@ export default function UnitManagementTable() {
         return (
           <button
             onClick={() => changeUnitStatus(unit.id, "Occupied")}
-            className={`${actionButtonBaseClass} border border-[#2db6b6] text-[#2db6b6] hover:bg-[#2db6b6]/10`}
+            className={`${actionButtonBaseClass} border cursor-pointer border-[#2db6b6] text-[#2db6b6] hover:bg-[#2db6b6]/10`}
           >
             Check In
           </button>
@@ -77,7 +97,7 @@ export default function UnitManagementTable() {
         return (
           <button
             onClick={() => openCheckoutModal(unit)}
-            className={`${actionButtonBaseClass} border border-red-500 text-red-600 hover:bg-red-50`}
+            className={`${actionButtonBaseClass} border cursor-pointer border-red-500 text-red-600 hover:bg-red-50`}
           >
             Check Out
           </button>
@@ -88,7 +108,7 @@ export default function UnitManagementTable() {
         return (
           <button
             onClick={() => changeUnitStatus(unit.id, "Available")}
-            className={`${actionButtonBaseClass} border border-orange-500 text-orange-700 hover:bg-orange-50`}
+            className={`${actionButtonBaseClass} border cursor-pointer border-orange-500 text-orange-700 hover:bg-orange-50`}
           >
             Resolve
           </button>
@@ -101,13 +121,13 @@ export default function UnitManagementTable() {
 
   return (
     <>
-      <div className="px-8 pt-8 pb-4 bg-white">
-        <div className="flex justify-between items-center">
-          <div className="relative">
+      <div className="bg-white px-4 pt-4 pb-4 md:px-8 md:pt-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:w-auto">
             <select
               onChange={(e) => getUnits(e.target.value)}
               defaultValue=""
-              className="appearance-none border border-gray-200 rounded-lg px-4 py-2 pr-10 text-sm bg-white text-gray-600 \
+              className="w-full cursor-pointer appearance-none border border-gray-200 rounded-lg px-4 py-2 pr-10 text-sm bg-white text-gray-600 sm:min-w-52 \
 							focus:outline-none hover:border-[#2db6b6]/50 transition"
             >
               <option value="">All Statuses</option>
@@ -124,7 +144,7 @@ export default function UnitManagementTable() {
 
           <button
             onClick={() => setIsNewUnitModalOpen(true)}
-            className="flex items-center gap-2 bg-[#2db6b6] hover:bg-[#25a5a5] text-white \
+            className="flex cursor-pointer w-full items-center justify-center gap-2 bg-[#2db6b6] hover:bg-[#25a5a5] text-white sm:w-auto \
 			px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm"
           >
             <i className="fi fi-rr-plus-small text-sm leading-none" />
@@ -133,57 +153,20 @@ export default function UnitManagementTable() {
         </div>
       </div>
 
-      <div className="overflow-x-auto min-h-72 bg-white p-6">
-        <table className="w-full text-center rounded-4xl overflow-hidden border-separate border-spacing-b-2 min-w-175">
-          <thead className="bg-[#d9f2f2]">
-            <tr className="text-sm text-gray-500">
-              <th className="px-6 py-3 font-medium">Name</th>
-              <th className="px-6 py-3 font-medium">Type</th>
-              <th className="px-6 py-3 font-medium">Status</th>
-              <th className="px-6 py-3 font-medium">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {units?.map((unit) => (
-              <tr
-                key={unit.id}
-                className="bg-white hover:bg-gray-50 transition"
-              >
-                <td className="px-6 py-4 font-medium text-gray-700">
-                  <div className="flex items-center gap-3 justify-center sm:justify-start">
-                    <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#2db6b6]/10 text-[#2db6b6]">
-                      {unit.type === "cabin" ? (
-                        <i className="fi fi-rr-home text-sm leading-none" />
-                      ) : (
-                        <i className="fi fi-rr-bed text-sm leading-none" />
-                      )}
-                    </div>
-                    {unit.name}
-                  </div>
-                </td>
-
-                <td className="px-6 py-4 text-gray-600">
-                  <span className="px-3 py-1 text-sm rounded-full bg-gray-100">
-                    {unit.type}
-                  </span>
-                </td>
-
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-3 py-1 text-sm rounded-full ${getStatusStyle(
-                      unit.status,
-                    )}`}
-                  >
-                    {unit.status}
-                  </span>
-                </td>
-
-                <td className="px-6 py-4">{renderActionButton(unit)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="min-h-72 bg-white p-4 md:p-6">
+        {hasViewportInfo && isMobileViewport ? (
+          <UnitManagementMobileList
+            units={units}
+            getStatusStyle={getStatusStyle}
+            renderActionButton={renderActionButton}
+          />
+        ) : (
+          <UnitManagementDesktopTable
+            units={units}
+            getStatusStyle={getStatusStyle}
+            renderActionButton={renderActionButton}
+          />
+        )}
 
         {checkoutUnit && (
           <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
