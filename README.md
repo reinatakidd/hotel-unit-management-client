@@ -1,4 +1,4 @@
-# Unit Management Frontend
+# Hotel Unit Management Frontend
 
 A Next.js frontend application for managing hotel units with a modern, responsive UI built with React, TypeScript, and Tailwind CSS.
 
